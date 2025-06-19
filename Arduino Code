@@ -1,0 +1,134 @@
+#if defined(ESP32)
+#include <WiFi.h>
+#include <FirebaseESP32.h>
+#elif defined(ESP8266)
+#include <ESP8266WiFi.h>
+#include <FirebaseESP8266.h>
+#endif
+
+#include <ESP32Servo.h>
+#include <Arduino.h>
+#include <WiFi.h>
+#include <Audio.h>
+
+#define CONNECTION_TIMEOUT 10
+#define LED 15
+
+Audio audio;
+FirebaseData fbdo;
+FirebaseAuth auth;
+FirebaseConfig config;
+
+String command;
+#define WIFI_SSID "POCO F4"
+#define WIFI_PASSWORD "poco@123"
+#define API_KEY ""
+#define DATABASE_URL ""
+int pos=0;
+ const int LED1 = 13;
+  const int LED2 = 12;
+  const int LED3 = 14;
+  const int LED4 = 27;
+  const int LED5 = 26;
+  
+
+
+void setup() {
+  pinMode(LED1,OUTPUT);
+  pinMode(LED2,OUTPUT);
+  pinMode(LED3,OUTPUT);
+  pinMode(LED4,OUTPUT);
+  pinMode(LED5,OUTPUT);
+
+  Serial.begin(115200);
+  delay(2000);
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+
+  Serial.println("\nConnecting");
+  int timeout_counter = 0;
+    pinMode(LED, OUTPUT);
+  
+  while (WiFi.status() != WL_CONNECTED) {
+    Serial.print(".");
+    delay(500);
+    timeout_counter++;
+    if (timeout_counter >= CONNECTION_TIMEOUT * 5) {
+      ESP.restart();
+    }
+  }
+  
+  Serial.println();
+  Serial.print("Connected.........: ");
+
+  config.api_key = API_KEY;
+  config.database_url = DATABASE_URL;
+  Firebase.begin(DATABASE_URL, API_KEY);
+  Firebase.setDoubleDigits(5);
+
+
+}
+
+void loop() {
+  if (Firebase.ready()) {
+    Firebase.getString(fbdo, "/ybrain/result");
+    command = fbdo.to<String>();
+    delay(200);
+
+    if (command != "") {
+      if (command == "1") {
+        Serial.println(command);
+            digitalWrite(LED1, HIGH); 
+            digitalWrite(LED2, LOW); 
+            digitalWrite(LED3, LOW);
+            digitalWrite(LED4, LOW);
+            digitalWrite(LED5, LOW);
+            
+            delay(2000);
+      } else if(command == "2"){
+        Serial.println(command);
+          digitalWrite(LED1, HIGH); 
+          digitalWrite(LED2, HIGH); 
+          digitalWrite(LED3, LOW);
+          digitalWrite(LED4, LOW);
+          digitalWrite(LED5, LOW);
+      }
+        else if(command == "3"){
+        Serial.println(command);
+          digitalWrite(LED1, HIGH); 
+          digitalWrite(LED2, HIGH); 
+          digitalWrite(LED3, HIGH); 
+          digitalWrite(LED4, LOW);
+          digitalWrite(LED5, LOW);
+      }
+         else if(command == "4"){
+        Serial.println(command);
+          digitalWrite(LED1, HIGH); 
+          digitalWrite(LED2, HIGH); 
+          digitalWrite(LED3, HIGH); 
+          digitalWrite(LED4, HIGH); 
+          digitalWrite(LED5, LOW); 
+          
+      }
+       else if(command == "5"){
+        Serial.println(command);
+          digitalWrite(LED1, HIGH); 
+          digitalWrite(LED2, HIGH); 
+          digitalWrite(LED3, HIGH); 
+          digitalWrite(LED4, HIGH); 
+          digitalWrite(LED5, HIGH);
+      }
+       else if(command == "0"){
+        Serial.println(command);
+          digitalWrite(LED1, LOW); 
+          digitalWrite(LED2, LOW); 
+          digitalWrite(LED3, LOW); 
+          digitalWrite(LED4, LOW); 
+          digitalWrite(LED5, LOW);
+      }
+     else {
+      Serial.println("number is 0");
+    }
+    }
+  }
+    delay(2000);
+  }
